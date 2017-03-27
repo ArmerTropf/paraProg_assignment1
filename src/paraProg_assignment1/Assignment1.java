@@ -45,19 +45,18 @@ public class Assignment1 {
 
 		CountDownLatch startLatch = new CountDownLatch(1);
 		CountDownLatch endLatch = new CountDownLatch(INCREMENTERS);
-		// Thread[] Incrementers = new Thread[INCREMENTERS];
+		Thread[] Incrementers = new Thread[INCREMENTERS];
 		
-		ExecutorService myExCached = Executors.newCachedThreadPool();
+		//ExecutorService myExCached = Executors.newCachedThreadPool();
 		//ExecutorService myExCached = Executors.newSingleThreadExecutor();
 		//ExecutorService myExCached = Executors.newFixedThreadPool(2);
 
 	
 		for (int i = 0; i < INCREMENTERS; i++) {
 
-			myExCached.submit(new Incrementer(startLatch, endLatch, new MyLong()));
-			// Incrementers[i] = new Thread(new Incrementer(startLatch,
-			// endLatch));
-			// Incrementers[i].start();
+			//myExCached.submit(new Incrementer(startLatch, endLatch, new MyLong()));
+			Incrementers[i] = new Thread(new Incrementer(startLatch, endLatch, new MyLong()));
+			Incrementers[i].start();
 		}
 		try {
 			
@@ -68,7 +67,7 @@ public class Assignment1 {
 			System.out.println("Finished after " + totalInc + " increments with counter = " + Incrementer.myLong_counter.get());
 		} catch (Exception e) {
 		}
-		myExCached.shutdown();
+		//myExCached.shutdown();
 
 	}
 }
@@ -81,22 +80,25 @@ interface CounterInterface {
 	void check(long desired);
 }
 
-class MyLong implements CounterInterface {
+class MyLong extends MyLongAtomic implements CounterInterface {
 
 	private long myCounter = 0;
-
-		
+			
 	@Override
 	public long get() {
-		// TODO Auto-generated method stub
-
-		return myCounter;
+		//return myCounter;
+		return myAtomicLongCounter.get();
 	}
 
 	@Override
 	public long incrementAndGet() {
-		this.myCounter++;
-		return this.myCounter;
+		//this.myCounter++;
+		//return this.myCounter;
+		
+		this.myAtomicLongCounter.incrementAndGet();
+		return myAtomicLongCounter.get();
+		
+		
 	}
 
 	@Override
@@ -108,5 +110,8 @@ class MyLong implements CounterInterface {
 }
 
 class MyLongAtomic {
-	AtomicLong myAtomicLongCounter;
+	
+	
+	protected AtomicLong myAtomicLongCounter = new AtomicLong(0);
+		
 }
