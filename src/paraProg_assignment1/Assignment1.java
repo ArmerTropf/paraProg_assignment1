@@ -31,7 +31,7 @@ public class Assignment1 {
 			try {
 				start.await();
 				for (int i = 0; i < RUNS; i++) {
-					myLong_counter.incrementAndGet();
+					myLong_counter.check(myLong_counter.incrementAndGet());
 				}
 				end.countDown();	
 			} 
@@ -55,8 +55,8 @@ public class Assignment1 {
 		for (int i = 0; i < INCREMENTERS; i++) {
 
 			//myExCached.submit(new Incrementer(startLatch, endLatch, new MyLong()));
-			myExCached.submit(new Incrementer(startLatch, endLatch, new MyLongAtomic()));
-			//myExCached.submit(new Incrementer(startLatch, endLatch, new MyLongAtomicModulo()));
+			//myExCached.submit(new Incrementer(startLatch, endLatch, new MyLongAtomic()));
+			myExCached.submit(new Incrementer(startLatch, endLatch, new MyLongAtomicModulo()));
 			
 			//Incrementers[i] = new Thread(new Incrementer(startLatch, endLatch, new MyLongAtomicModulo()));
 			//Incrementers[i].start();
@@ -100,10 +100,13 @@ class MyLong implements CounterInterface {
 		
 		return this.myCounter;	
 	}
-
 	@Override
 	public void check(long desired) {
-
+		//Thread myThread = Thread.currentThread();
+		//System.out.println(myThread.getName() + " In Klasse vorhanden: " + get() + " Hochgezaehlt uebergeben " + desired);
+		
+		//if (get() != desired)
+		//	System.out.println(myThread.getName() + " In Klasse vorhanden: " + get() + " Hochgezaehlt uebergeben " + desired);
 	}
 
 }
