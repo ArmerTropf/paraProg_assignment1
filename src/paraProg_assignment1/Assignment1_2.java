@@ -1,4 +1,4 @@
-package paraProg_assignment1_2;
+package paraProg_assignment1;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
@@ -22,7 +22,7 @@ public class Assignment1_2 {
 		// 1 2 1*1+2*2 = 5
 		// 3 4 3*1+4*2 = 11
 
-		double[] y = new double[myVector.length];
+		double[] result = new double[myVector.length];
 
 		// for (int i = 0; i < myVector.length; i++)
 		// for (int j = 0; j < myMatrix[0].length; j++)
@@ -31,18 +31,15 @@ public class Assignment1_2 {
 		// System.out.println(y[0]);
 		// System.out.println(y[1]);
 
-		//MatrixVectorMultiplication myMulti = new MatrixVectorMultiplication(myMatrix, myVector, y, 0, 0);
-		MatrixVectorMultiplication myMulti = new MatrixVectorMultiplication(MatrixVectorMultiplication.getTestMatrix(2), MatrixVectorMultiplication.getTestVector(2), y, 0, 3);
-
-		double[][] myTest = myMulti.getTestMatrix(2);
-		System.out.println(myTest[0][0]);
-		System.out.println(myTest[0][1]);
-		System.out.println(myTest[1][0]);
-		System.out.println(myTest[1][1]);
-
-		// myMulti.compute();
-
-		// ForkJoinPool myJoinPool = new ForkJoinPool();
+		// MatrixVectorMultiplication myMulti = new
+		// MatrixVectorMultiplication(myMatrix, myVector, y, 0, 0);
+		MatrixVectorMultiplication myMulti = new MatrixVectorMultiplication(myMatrix, myVector, result, 0, 2);
+		myMulti.compute();
+		myMulti.join();
+		System.out.println(result[0]);
+		System.out.println(result[1]);
+		// ForkJoinPool myJoinPool = new ForkJoinPool(2);
+		// myJoinPool.submit(this);
 
 	}
 
@@ -74,14 +71,17 @@ class MatrixVectorMultiplication extends RecursiveAction {
 	@Override
 	protected void compute() {
 
-		for (int i = 0; i < vector.length; i++)
-			for (int j = 0; j < matrix[0].length; j++) {
-				result[i] += matrix[i][j] * vector[j];
+		if (length != 1) {
+			int split = length >> 1;
+			new MatrixVectorMultiplication(matrix, vector, result, startIndex, split).fork();
+			new MatrixVectorMultiplication(matrix, vector, result, startIndex + split, split).fork();
+		} else {
+			for (int i = 0; i < vector.length; i++)
+				for (int j = this.startIndex; j < this.length; j++) {
+					result[i] += matrix[i][j] * vector[j];
 
-			}
-
-		System.out.println(result[0]);
-		System.out.println(result[1]);
+				}
+		}
 	}
 
 	public static double[][] getTestMatrix(int dim) {
@@ -106,8 +106,6 @@ class MatrixVectorMultiplication extends RecursiveAction {
 
 	void doIt(ForkJoinPool pool, final double[][] matrix, final double[] vector, final double[] result) {
 
-		 ForkJoinPool myJoinPool = new ForkJoinPool(2);
-		 myJoinPool.submit(this);
 	}
 
 }

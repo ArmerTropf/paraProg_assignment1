@@ -4,6 +4,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.LongBinaryOperator;
+
+import org.w3c.dom.css.Counter;
 
 
 /**
@@ -14,32 +17,33 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Assignment1 {
 	private final static int INCREMENTERS = 7;
-	private final static int RUNS = 5;
-	// private static long counter = 0;
+	private final static int RUNS = 55;
 
-	protected static class  Incrementer implements Runnable {
+	protected static class Incrementer implements Runnable {
 		private final CountDownLatch start, end;
-		private static MyLong myLong_counter;
+		private final CounterInterface counter;
 
-		public Incrementer(CountDownLatch start, CountDownLatch end, MyLong counter) {
+		public Incrementer(CountDownLatch start, CountDownLatch end, CounterInterface counter) {
 			this.start = start;
 			this.end = end;
-			Incrementer.myLong_counter = counter;
+			this.counter = counter;
 		}
 
 		public void run() {
 			try {
 				start.await();
 				for (int i = 0; i < RUNS; i++) {
-					myLong_counter.check(myLong_counter.incrementAndGet());
+					counter.incrementAndGet();
 				}
 				end.countDown();	
 			} 
 			catch (Exception e) {
 			}
 						
+			
 		}
 	}
+
 
 	public static void main(String[] args) {
 
@@ -51,12 +55,14 @@ public class Assignment1 {
 		//ExecutorService myExCached = Executors.newSingleThreadExecutor();
 		//ExecutorService myExCached = Executors.newFixedThreadPool(2);
 
-	
+//		CounterInterface counter =  new MyLong();
+//		CounterInterface counter =  new MyLongAtomic();
+		CounterInterface counter =  new MyLongAtomicModulo();
+		
 		for (int i = 0; i < INCREMENTERS; i++) {
 
-			//myExCached.submit(new Incrementer(startLatch, endLatch, new MyLong()));
-			//myExCached.submit(new Incrementer(startLatch, endLatch, new MyLongAtomic()));
-			myExCached.submit(new Incrementer(startLatch, endLatch, new MyLongAtomicModulo()));
+			myExCached.submit(new Incrementer(startLatch, endLatch, counter ));
+		
 			
 			//Incrementers[i] = new Thread(new Incrementer(startLatch, endLatch, new MyLongAtomicModulo()));
 			//Incrementers[i].start();
@@ -67,7 +73,7 @@ public class Assignment1 {
 			
 			endLatch.await();
 			long totalInc = RUNS * INCREMENTERS;
-			System.out.println("Finished after " + totalInc + " increments with counter = " + Incrementer.myLong_counter.get());
+			counter.check(totalInc);
 		} catch (Exception e) {
 		}
 		myExCached.shutdown();
@@ -75,13 +81,16 @@ public class Assignment1 {
 	}
 }
 
+
+
+
 interface CounterInterface {
 
 	
 	long get();
 	long incrementAndGet();
 	default void check(long desired) {
-		
+		System.out.println("Finished after " + desired + " increments with counter = " + this.get());
 	}
 }
 
@@ -100,14 +109,7 @@ class MyLong implements CounterInterface {
 		
 		return this.myCounter;	
 	}
-	@Override
-	public void check(long desired) {
-		//Thread myThread = Thread.currentThread();
-		//System.out.println(myThread.getName() + " In Klasse vorhanden: " + get() + " Hochgezaehlt uebergeben " + desired);
-		
-		//if (get() != desired)
-		//	System.out.println(myThread.getName() + " In Klasse vorhanden: " + get() + " Hochgezaehlt uebergeben " + desired);
-	}
+	
 
 }
 
@@ -128,11 +130,6 @@ class MyLongAtomic extends MyLong {
 		
 		return myAtomicLongCounter.get();
 	}
-
-	@Override
-	public void check(long desired) {
-		
-	}
 		
 }
 
@@ -147,13 +144,21 @@ class MyLongAtomicModulo extends MyLongAtomic {
 
 	@Override
 	public long incrementAndGet() {
-		myAtomicLongModuloCounter.set(myAtomicLongModuloCounter.incrementAndGet() % 16);
-		return myAtomicLongModuloCounter.get();
+		return myAtomicLongModuloCounter.accumulateAndGet(16, new LongBinaryOperator() {
+			
+			@Override
+			public long applyAsLong(long left, long right) {
+				
+				return (left+1) % right;
+			}
+		});
+		//myAtomicLongModuloCounter.set(myAtomicLongModuloCounter.incrementAndGet() % 16);
+		//return myAtomicLongModuloCounter.get();
 	}
 
 	@Override
 	public void check(long desired) {
-
+		System.out.println("Expected: " + desired % 16 + " actual: " + this.get());
 	}
 
 }
