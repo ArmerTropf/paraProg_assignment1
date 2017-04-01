@@ -3,7 +3,9 @@
 .classpath
 /bin/
 
-
+# intellij
+.idea
+*.iml
 
 *.class
 

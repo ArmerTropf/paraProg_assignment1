@@ -1,4 +1,4 @@
-package paraProg_assignment1;
+package ParallelProg.Assignment1_2;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
@@ -6,7 +6,6 @@ import java.util.concurrent.RecursiveAction;
 public class Assignment1_2 {
 
 	public static void main(String[] args) {
-
 		int dim = 10000;
 		double[][] myMatrix = MatrixVectorMultiplication.getTestMatrix(dim);
 		double[] myVector = MatrixVectorMultiplication.getTestVector(dim);
@@ -17,7 +16,6 @@ public class Assignment1_2 {
 		MatrixVectorMultiplication.doIt(pool, myMatrix, myVector, result);
 
 		MatrixVectorMultiplication.printVector(result);
-
 	}
 
 }
@@ -64,7 +62,6 @@ class MatrixVectorMultiplication extends RecursiveAction {
 
 	public static void doIt(ForkJoinPool pool, final double[][] matrix, final double[] vector, final double[] result) {
 		pool.invoke(new MatrixVectorMultiplication(matrix, vector, result, 0, vector.length));
-
 	}
 
 	public static double[][] getTestMatrix(int dim) {
