@@ -19,10 +19,10 @@ public class Assignment1_1Test {
         System.out.println("Manual thread execution + MyLong:");
 
         // arrange
-        CounterInterface counter = new MyLong();
+        CounterInterface counter = getMyLong();
 
         // act
-        manualThreadExecution(counter);
+        executeManual(counter);
 
         // assert
         long totalInc = numOfRuns * numOfIncrementers;
@@ -34,10 +34,10 @@ public class Assignment1_1Test {
         System.out.println("Manual thread execution + MyLongAtomic:");
 
         // arrange
-        CounterInterface counter = new MyLongAtomic();
+        CounterInterface counter = getMyLongAtomic();
 
         // act
-        manualThreadExecution(counter);
+        executeManual(counter);
 
         // assert
         long expected = numOfRuns * numOfIncrementers;
@@ -50,18 +50,177 @@ public class Assignment1_1Test {
         System.out.println("Manual thread execution + MyLongAtomicModulo:");
 
         // arrange
-        CounterInterface counter = new MyLongAtomicModulo(modulo);
+        CounterInterface counter = getMyLongAtomicModulo(modulo);
 
         // act
-        manualThreadExecution(counter);
+        executeManual(counter);
 
         // assert
-        long expected = numOfRuns * numOfIncrementers % modulo;
+        long expected = (numOfRuns * numOfIncrementers) % modulo;
         counter.check(expected);
         Assert.assertFalse(counter.differs(expected));
     }
 
-    private void manualThreadExecution(CounterInterface counter) {
+    @Test
+    public void TestAssignment1_1_CachedThreadPool_MyLong() {
+        System.out.println("CachedThreadPool + MyLong:");
+
+        // arrange
+        CounterInterface counter = getMyLong();
+
+        // act
+        executeExecutor(Executors.newCachedThreadPool(), counter);
+
+        // assert
+        long expected = numOfRuns * numOfIncrementers;
+        counter.check(expected);
+    }
+
+
+    @Test
+    public void TestAssignment1_1_CachedThreadPool_MyLongAtomic() {
+        System.out.println("CachedThreadPool + MyLongAtomic:");
+
+        // arrange
+        CounterInterface counter = getMyLongAtomic();
+
+        // act
+        executeExecutor(Executors.newCachedThreadPool(), counter);
+
+        // assert
+        long expected = numOfRuns * numOfIncrementers;
+        counter.check(expected);
+        Assert.assertFalse(counter.differs(expected));
+    }
+
+    @Test
+    public void TestAssignment1_1_CachedThreadPool_MyLongAtomicModulo() {
+        System.out.println("CachedThreadPool + MyLongAtomicModulo:");
+
+        // arrange
+        CounterInterface counter = getMyLongAtomicModulo(modulo);
+
+        // act
+        executeExecutor(Executors.newCachedThreadPool(), counter);
+
+        // assert
+        long expected = (numOfRuns * numOfIncrementers) % modulo;
+        counter.check(expected);
+        Assert.assertFalse(counter.differs(expected));
+    }
+
+    @Test
+    public void TestAssignment1_1_SingleThreadExecutor_MyLong() {
+        System.out.println("SingleThread + MyLong:");
+
+        // arrange
+        CounterInterface counter = getMyLong();
+
+        // act
+        executeExecutor(Executors.newSingleThreadExecutor(), counter);
+
+        // assert
+        long expected = numOfRuns * numOfIncrementers;
+        counter.check(expected);
+    }
+
+    @Test
+    public void TestAssignment1_1_SingleThreadExecutor_MyLongAtomic() {
+        System.out.println("SingleThread + MyLongAtomic:");
+
+        // arrange
+        CounterInterface counter = getMyLongAtomic();
+
+        // act
+        executeExecutor(Executors.newSingleThreadExecutor(), counter);
+
+        // assert
+        long expected = numOfRuns * numOfIncrementers;
+        counter.check(expected);
+        Assert.assertFalse(counter.differs(expected));
+    }
+
+    @Test
+    public void TestAssignment1_1_SingleThreadExecutor_MyLongAtomicModulo() {
+        System.out.println("SingleThread + MyLongAtomicModulo:");
+
+        // arrange
+        CounterInterface counter = getMyLongAtomicModulo(modulo);
+
+        // act
+        executeExecutor(Executors.newSingleThreadExecutor(), counter);
+
+        // assert
+        long expected = (numOfRuns * numOfIncrementers) % modulo;
+        counter.check(expected);
+        Assert.assertFalse(counter.differs(expected));
+    }
+
+    @Test
+    public void TestAssignment1_1_FixedThreadPool_MyLong() {
+        System.out.println("FixedThreadPool + MyLong:");
+
+        // arrange
+        CounterInterface counter = getMyLong();
+
+        // act
+        executeExecutor(Executors.newFixedThreadPool(fixedThreadsNumber), counter);
+
+        // assert
+        long expected = numOfRuns * numOfIncrementers;
+        counter.check(expected);
+    }
+
+    @Test
+    public void TestAssignment1_1_FixedThreadPool_MyLongAtomic() {
+        System.out.println("FixedThreadPool + MyLongAtomic:");
+
+        // arrange
+        CounterInterface counter = getMyLongAtomic();
+
+        // act
+        executeExecutor(Executors.newFixedThreadPool(fixedThreadsNumber), counter);
+
+        // assert
+        long expected = numOfRuns * numOfIncrementers;
+        counter.check(expected);
+        Assert.assertFalse(counter.differs(expected));
+    }
+
+    @Test
+    public void TestAssignment1_1_FixedThreadPool_MyLongAtomicModulo() {
+        System.out.println("FixedThreadPool + MyLongAtomicModulo:");
+
+        // arrange
+        CounterInterface counter = getMyLongAtomicModulo(modulo);
+
+        // act
+        executeExecutor(Executors.newFixedThreadPool(fixedThreadsNumber), counter);
+
+        // assert
+        long expected = (numOfRuns * numOfIncrementers) % modulo;
+        counter.check(expected);
+        Assert.assertFalse(counter.differs(expected));
+    }
+
+    @After
+    public void printRuler() {
+        System.out.println("=============================================");
+    }
+
+    private MyLong getMyLong() {
+        return new MyLong();
+    }
+
+    private MyLongAtomic getMyLongAtomic() {
+        return new MyLongAtomic();
+    }
+
+    private MyLongAtomicModulo getMyLongAtomicModulo(long modulo) {
+        return new MyLongAtomicModulo(modulo);
+    }
+
+    private void executeManual(CounterInterface counter) {
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch endLatch = new CountDownLatch(numOfIncrementers);
 
@@ -79,154 +238,7 @@ public class Assignment1_1Test {
         waitForLatches(startLatch, endLatch);
     }
 
-    @Test
-    public void TestAssignment1_1_CachedThreadPool_MyLong() {
-        System.out.println("CachedThreadPool + MyLong:");
-
-        // arrange
-        CounterInterface counter = new MyLong();
-
-        // act
-        execute(counter, Executors.newCachedThreadPool());
-
-        // assert
-        long expected = numOfRuns * numOfIncrementers;
-        counter.check(expected);
-    }
-
-
-    @Test
-    public void TestAssignment1_1_CachedThreadPool_MyLongAtomic() {
-        System.out.println("CachedThreadPool + MyLongAtomic:");
-
-        // arrange
-        CounterInterface counter = new MyLongAtomic();
-
-        // act
-        execute(counter, Executors.newCachedThreadPool());
-
-        // assert
-        long expected = numOfRuns * numOfIncrementers;
-        counter.check(expected);
-        Assert.assertFalse(counter.differs(expected));
-    }
-
-    @Test
-    public void TestAssignment1_1_CachedThreadPool_MyLongAtomicModulo() {
-        System.out.println("CachedThreadPool + MyLongAtomicModulo:");
-
-        // arrange
-        CounterInterface counter = new MyLongAtomicModulo(modulo);
-
-        // act
-        execute(counter, Executors.newCachedThreadPool());
-
-        // assert
-        long expected = numOfRuns * numOfIncrementers % modulo;
-        counter.check(expected);
-        Assert.assertFalse(counter.differs(expected));
-    }
-
-    @Test
-    public void TestAssignment1_1_SingleThreadExecutor_MyLong() {
-        System.out.println("SingleThread + MyLong:");
-
-        // arrange
-        CounterInterface counter = new MyLong();
-
-        // act
-        execute(counter, Executors.newSingleThreadExecutor());
-
-        // assert
-        long expected = numOfRuns * numOfIncrementers;
-        counter.check(expected);
-    }
-
-    @Test
-    public void TestAssignment1_1_SingleThreadExecutor_MyLongAtomic() {
-        System.out.println("SingleThread + MyLongAtomic:");
-
-        // arrange
-        CounterInterface counter = new MyLongAtomic();
-
-        // act
-        execute(counter, Executors.newSingleThreadExecutor());
-
-        // assert
-        long expected = numOfRuns * numOfIncrementers;
-        counter.check(expected);
-        Assert.assertFalse(counter.differs(expected));
-    }
-
-    @Test
-    public void TestAssignment1_1_SingleThreadExecutor_MyLongAtomicModulo() {
-        System.out.println("SingleThread + MyLongAtomicModulo:");
-
-        // arrange
-        CounterInterface counter = new MyLongAtomicModulo(modulo);
-
-        // act
-        execute(counter, Executors.newSingleThreadExecutor());
-
-        // assert
-        long expected = numOfRuns * numOfIncrementers % modulo;
-        counter.check(expected);
-        Assert.assertFalse(counter.differs(expected));
-    }
-
-    @Test
-    public void TestAssignment1_1_FixedThreadPool_MyLong() {
-        System.out.println("FixedThreadPool + MyLong:");
-
-        // arrange
-        CounterInterface counter = new MyLong();
-
-        // act
-        execute(counter, Executors.newFixedThreadPool(fixedThreadsNumber));
-
-        // assert
-        long expected = numOfRuns * numOfIncrementers;
-        counter.check(expected);
-    }
-
-    @Test
-    public void TestAssignment1_1_FixedThreadPool_MyLongAtomic() {
-        System.out.println("FixedThreadPool + MyLongAtomic:");
-
-        // arrange
-        CounterInterface counter = new MyLongAtomic();
-
-        // act
-        execute(counter, Executors.newFixedThreadPool(fixedThreadsNumber));
-
-        // assert
-        long expected = numOfRuns * numOfIncrementers;
-        counter.check(expected);
-        Assert.assertFalse(counter.differs(expected));
-    }
-
-    @Test
-    public void TestAssignment1_1_FixedThreadPool_MyLongAtomicModulo() {
-        System.out.println("FixedThreadPool + MyLongAtomicModulo:");
-
-        // arrange
-        CounterInterface counter = new MyLongAtomicModulo(modulo);
-
-        // act
-        execute(counter, Executors.newFixedThreadPool(fixedThreadsNumber));
-
-        // assert
-        long expected = numOfRuns * numOfIncrementers % modulo;
-        counter.check(expected);
-        Assert.assertFalse(counter.differs(expected));
-    }
-
-    @After
-    public void printRuler() {
-        System.out.println("=============================================");
-    }
-
-    private void execute(CounterInterface counter, ExecutorService executorService) {
+    private void executeExecutor(ExecutorService executorService, CounterInterface counter) {
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch endLatch = new CountDownLatch(numOfIncrementers);
 
@@ -248,4 +260,5 @@ public class Assignment1_1Test {
 
         }
     }
+
 }
