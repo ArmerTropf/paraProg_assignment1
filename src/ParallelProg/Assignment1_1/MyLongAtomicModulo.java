@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Created by hmahrt on 01.04.17.
  */
-class MyLongAtomicModulo extends MyLongAtomic {
+public class MyLongAtomicModulo extends MyLongAtomic {
 
     private final long modulo;
     private AtomicLong myAtomicLongModuloCounter = new AtomicLong(0);
