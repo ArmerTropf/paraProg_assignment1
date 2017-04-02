@@ -1,15 +1,13 @@
 import ParallelProg.Assignment1_2.MatrixVectorMultiplication;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.concurrent.ForkJoinPool;
 
 public class Assignment1_2Test {
 
-    final static int dimension = 3;
-    final static int par = 5;
+    final static int dimension = 1000;
+    final static int par = 4;
 
     @Test
     public void MatrixVectorMultiplicationTest() {
