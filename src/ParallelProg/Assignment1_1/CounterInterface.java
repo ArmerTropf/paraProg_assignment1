@@ -1,8 +1,5 @@
 package ParallelProg.Assignment1_1;
 
-/**
- * Created by hmahrt on 01.04.17.
- */
 public interface CounterInterface {
 
     /**

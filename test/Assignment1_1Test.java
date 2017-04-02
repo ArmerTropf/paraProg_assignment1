@@ -9,9 +9,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Assignment1_1Test {
+
     final static int numOfIncrementers = 150;
     final static int numOfRuns = 10000;
-    final static int fixedThreadsNumber = 3;
+    final static int numOfFixedThreads = 3;
     final static long modulo = 16;
 
     @Test
@@ -25,8 +26,9 @@ public class Assignment1_1Test {
         executeManual(counter);
 
         // assert
-        long totalInc = numOfRuns * numOfIncrementers;
-        counter.check(totalInc);
+        long expected = numOfRuns * numOfIncrementers;
+        counter.check(expected);
+        Assert.assertFalse(counter.differs(expected));
     }
 
     @Test
@@ -74,6 +76,7 @@ public class Assignment1_1Test {
         // assert
         long expected = numOfRuns * numOfIncrementers;
         counter.check(expected);
+        Assert.assertFalse(counter.differs(expected));
     }
 
 
@@ -122,6 +125,7 @@ public class Assignment1_1Test {
         // assert
         long expected = numOfRuns * numOfIncrementers;
         counter.check(expected);
+        Assert.assertFalse(counter.differs(expected));
     }
 
     @Test
@@ -164,11 +168,12 @@ public class Assignment1_1Test {
         CounterInterface counter = getMyLong();
 
         // act
-        executeExecutor(Executors.newFixedThreadPool(fixedThreadsNumber), counter);
+        executeExecutor(Executors.newFixedThreadPool(numOfFixedThreads), counter);
 
         // assert
         long expected = numOfRuns * numOfIncrementers;
         counter.check(expected);
+        Assert.assertFalse(counter.differs(expected));
     }
 
     @Test
@@ -179,7 +184,7 @@ public class Assignment1_1Test {
         CounterInterface counter = getMyLongAtomic();
 
         // act
-        executeExecutor(Executors.newFixedThreadPool(fixedThreadsNumber), counter);
+        executeExecutor(Executors.newFixedThreadPool(numOfFixedThreads), counter);
 
         // assert
         long expected = numOfRuns * numOfIncrementers;
@@ -195,7 +200,7 @@ public class Assignment1_1Test {
         CounterInterface counter = getMyLongAtomicModulo(modulo);
 
         // act
-        executeExecutor(Executors.newFixedThreadPool(fixedThreadsNumber), counter);
+        executeExecutor(Executors.newFixedThreadPool(numOfFixedThreads), counter);
 
         // assert
         long expected = (numOfRuns * numOfIncrementers) % modulo;
