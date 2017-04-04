@@ -6,7 +6,7 @@ import java.util.concurrent.ForkJoinPool;
 
 public class Assignment1_2Test {
 
-    final static int dimension = 1000;
+    final static int dimension = 3;
     final static int par = 4;
 
     @Test
@@ -24,6 +24,16 @@ public class Assignment1_2Test {
 
         // assert
         Assert.assertArrayEquals(seqResult, result,0.001);
+
+        System.out.println("Ausgangsmatrix");
+        MatrixVectorMultiplication.printMatrix(matrix);
+        System.out.println();
+        System.out.println("Ausgangsvector");
+        MatrixVectorMultiplication.printVector(vector);
+        System.out.println();
+        System.out.println("Ergebnisvector");
+        MatrixVectorMultiplication.printVector(result);
+
     }
 
     private double[] seqMatrixVectorMulitplication(double[][] matrix, double[] vector) {
@@ -32,7 +42,7 @@ public class Assignment1_2Test {
 
         for (int i = 0; i < vector.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                result[i] += matrix[i][j] * vector[i];
+                result[i] += matrix[i][j] * vector[j];
             }
         }
         return result;

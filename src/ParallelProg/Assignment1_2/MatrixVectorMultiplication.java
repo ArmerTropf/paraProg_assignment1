@@ -36,8 +36,9 @@ public class MatrixVectorMultiplication extends RecursiveAction {
             System.out.println("StartIndex: " + startIndex + " " + length + " " + Thread.currentThread().toString());
             double res = 0.0;
             for (int i = 0; i < vector.length; i++)
-                res += (matrix[startIndex][i] * vector[startIndex]);
+                res += (matrix[startIndex][i] * vector[i]);
             result[startIndex] = res;
+            System.out.println(result[startIndex]);
         }
     }
 
